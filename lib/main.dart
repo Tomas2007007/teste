@@ -217,7 +217,7 @@ class _Pagina3State extends State<Pagina3> {
               ),
               ElevatedButton(
                 onPressed: _resetar,
-                style: ElevatedButton.styleFrom(primary: Colors.red),
+                style: ElevatedButton.styleFrom(primary: Colors.blue),
                 child: Text('Resetar'),
               ),
             ],
