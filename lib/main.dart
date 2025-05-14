@@ -145,17 +145,89 @@ class Pagina2 extends StatelessWidget {
 
 // -------------------- PÁGINA 3: Cronômetro --------------------
 
-class Pagina3 extends StatelessWidget {
+class Pagina3 extends StatefulWidget {
+  @override
+  _Pagina3State createState() => _Pagina3State();
+}
+
+class _Pagina3State extends State<Pagina3> {
+  final Stopwatch _stopwatch = Stopwatch();
+  Timer? _timer;
+
+  String get _tempoFormatado {
+    final ms = _stopwatch.elapsedMilliseconds;
+    final hundreds = ((ms / 10) % 100).floor();
+    final seconds = ((ms / 1000) % 60).floor();
+    final minutes = (ms / 60000).floor();
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    return '${twoDigits(minutes)}:${twoDigits(seconds)}.${twoDigits(hundreds)}';
+  }
+
+  void _iniciar() {
+    if (!_stopwatch.isRunning) {
+      _stopwatch.start();
+      _timer = Timer.periodic(Duration(milliseconds: 30), (_) {
+        if (!mounted) return;
+        setState(() {}); // atualiza o display
+      });
+    }
+  }
+
+  void _pausar() {
+    if (_stopwatch.isRunning) {
+      _stopwatch.stop();
+      _timer?.cancel();
+    }
+  }
+
+  void _resetar() {
+    _stopwatch.reset();
+    setState(() {}); // exibe 00:00.00
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _stopwatch.stop();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Despertador',
-        style: TextStyle(fontSize: 24, color: Colors.white),
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 50, horizontal: 20),
+      child: Column(
+        children: [
+          Text(
+            _tempoFormatado,
+            style: TextStyle(
+              fontSize: 72,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(height: 40),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(onPressed: _iniciar, child: Text('Iniciar')),
+              ElevatedButton(
+                onPressed: _stopwatch.isRunning ? _pausar : _iniciar,
+                child: Text(_stopwatch.isRunning ? 'Pausar' : 'Retomar'),
+              ),
+              ElevatedButton(
+                onPressed: _resetar,
+                style: ElevatedButton.styleFrom(primary: Colors.red),
+                child: Text('Resetar'),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 }
+
 
 // -------------------- PÁGINA 4: Temporizador --------------------
 
